@@ -70,10 +70,10 @@ const remove = async (params, credentials) => {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + credentials.t
       }
-    })
-    return await response.json()
+    });
+    return await response.json();
   } catch(err) {
-    console.log(err)
+    console.log(err);
   }
 }
 

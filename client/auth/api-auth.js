@@ -24,4 +24,5 @@ const signout = async () => {
   }
 }
 
+export default { signin, signout }
 export { signin, signout }
