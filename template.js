@@ -1,4 +1,4 @@
-export default ({markup, css})=>{
+export default ({ markup, css }) => {
   return `
     <html lang="eng">
       <head>
@@ -17,4 +17,4 @@ export default ({markup, css})=>{
     </html>
   
   `;
-}
+};
