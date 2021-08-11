@@ -68,7 +68,12 @@ export default function EditProfile({ match }) {
       if (data && data.error) {
         setValues({ ...values, error: data.error });
       } else {
-        setValues({ ...values, name: data.name, email: data.email });
+        setValues({
+          ...values,
+          name: data.name,
+          email: data.email,
+          about: data.about,
+        });
       }
     });
 
@@ -78,18 +83,18 @@ export default function EditProfile({ match }) {
   }, [match.params.userId]);
 
   const clickSubmit = () => {
-    const user = {
-      name: values.name || undefined,
-      email: values.email || undefined,
-      password: values.password || undefined,
-    };
-
+    let userData = new FormData();
+    values.name && userData.append("name", values.name);
+    values.email && userData.append("email", values.email);
+    values.about && userData.append("about", values.about);
+    values.password && userData.append("password", values.password);
+    values.photo && userData.append("photo", values.photo);
     update(
       {
         userId: match.params.userId,
       },
       { t: jwt.token },
-      user
+      userData
     ).then((data) => {
       if (data && data.error) {
         setValues({ ...values, error: data.error });
@@ -100,8 +105,9 @@ export default function EditProfile({ match }) {
   };
 
   const handleChange = (name) => (event) => {
-    setValues({ ...values, [name]: event.target.value });
-    console.log(event.target.value)
+    const value = name === "photo" ? event.target.files[0] : event.target.value;
+
+    setValues({ ...values, [name]: value });
   };
 
   if (values.redirectToProfile) {
@@ -115,7 +121,7 @@ export default function EditProfile({ match }) {
           Edit Profile
         </Typography>
         <input
-          style={{display:"none"}}
+          style={{ display: "none" }}
           accept="image/*"
           type="file"
           onChange={handleChange("photo")}
@@ -126,7 +132,7 @@ export default function EditProfile({ match }) {
             Uplode <FileUplode />
           </Button>
         </label>
-        <span>{  values.photo ? values.photo : " "}  </span>
+        <span>{values.photo ? values.photo.name : " "} </span>
         <br />
         <TextField
           id="name"

@@ -1,6 +1,9 @@
 import User from "./../models/user.model";
 import extend from "lodash/extend";
 import errorHandler from "./error.controller.js";
+import formidable from "formidable";
+import fs from "fs";
+import profileImage from "./../../client/assets/images/profile-picture.jpg";
 
 //................................................................
 //the classic index function to list all the docs in the collection
@@ -59,20 +62,34 @@ const show = (req, res) => {
 };
 //.................................................................
 //updating a doc by id
-const update = async (req, res) => {
-  try {
+const update = (req, res) => {
+  let form = new formidable.IncomingForm();
+  form.keepExtensions = true;
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      return res.status(400).json({
+        error: "Photo could not be unloaded",
+      });
+    }
     let user = req.profile;
-    user = extend(user, req.body); //extend is the imported function from lodash
+    user = extend(user, fields);
     user.updated = Date.now();
-    await user.save();
-    user.hashed_password = undefined;
-    user.salt = undefined;
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
-    });
-  }
+    if (files.photo) {
+      user.photo.data = fs.readFileSync(files.photo.path);
+      user.photo.contentType = files.photo.type;
+    }
+
+    try {
+      await user.save();
+      user.hashed_password = undefined;
+      user.salt = undefined;
+      res.json(user);
+    } catch (err) {
+      return res.status(400).json({
+        error: errorHandler.getErrorMessage(err),
+      });
+    }
+  });
 };
 //........................................................................
 //delete a document by ID
@@ -89,5 +106,19 @@ const destroy = async (req, res) => {
     });
   }
 };
+//........................................................................
+//this controller fetchs the user profile picturefrom the data base
+const photo= (req, res, next) => {
+  if(req.profile.photo.data){
+    res.set("Content-Type", req.profile.photo.contentType);
+    return res.send(req.profile.photo.data);
+  }
+  next();
+}
+//........................................................................
+//here is the controller for the default picture
+const defaultImage= (req, res) => {
+  return res.sendFile(process.cwd()+profileImage);
+}
 
-export default { index, store, show, update, destroy, findUserById };
+export default { index, store, show, update, destroy, findUserById, photo, defaultImage};

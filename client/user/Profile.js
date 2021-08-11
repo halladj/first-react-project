@@ -50,7 +50,6 @@ export default function Profile({ match }) {
       { t: jwt.token },
       signal
     ).then((data) => {
-      console.log(data);
       if (data && data.error) {
         setRedirectToSignin(true);
       } else {
@@ -62,6 +61,11 @@ export default function Profile({ match }) {
       abordController.abort();
     };
   }, [match.params.userId]);
+
+
+  const photoUrl= user._id ? `/api/users/photo/${user._id}?${new Date().getTime()}`
+                                  : `/api/users/defaultPhoto`
+
 
   if (redirectToSignin) {
     return <Redirect to="/signin" />;
@@ -75,9 +79,7 @@ export default function Profile({ match }) {
       <List dense>
         <ListItem>
           <ListItemAvatar>
-            <Avatar>
-              <Person />
-            </Avatar>
+            <Avatar src={photoUrl}/>
           </ListItemAvatar>
           <ListItemText primary={user.name} secondary={user.email} />
           {auth.isAuthenticated().user &&

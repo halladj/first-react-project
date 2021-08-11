@@ -23,6 +23,17 @@ router
     userController.destroy
   );
 
+//here goes the photo controller to
+//fetch the user profile picture 
+//if found otherwise fetch the default one
+router
+  .route("/api/users/photo/:userId")
+    .get(userController.photo, userController.defaultImage)
+router
+  .route("api/users/defaultPhoto")
+    .get(userController.defaultImage)
+    
+
 //mounts the user instence under the name of profile with proper id
 //on the request object << it's basicaly a middleware
 //that is triggered with the :userId params is in use>>
