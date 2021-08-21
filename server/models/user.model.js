@@ -32,6 +32,18 @@ const UserSchema = mongoose.Schema({
     data: Buffer,
     contentType: String,
   },
+  following: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+    },
+  ],
+  follower: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+    },
+  ],
 });
 
 UserSchema.virtual("password")

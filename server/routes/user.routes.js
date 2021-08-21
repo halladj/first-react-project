@@ -24,15 +24,29 @@ router
   );
 
 //here goes the photo controller to
-//fetch the user profile picture 
+//fetch the user profile picture
 //if found otherwise fetch the default one
 router
   .route("/api/users/photo/:userId")
-    .get(userController.photo, userController.defaultImage)
+  .get(userController.photo, userController.defaultImage);
+router.route("api/users/defaultPhoto").get(userController.defaultImage);
+
+//these routes are for endpoints for the following and followers
+//API's
 router
-  .route("api/users/defaultPhoto")
-    .get(userController.defaultImage)
-    
+  .route("/api/users/follow")
+  .put(
+    authController.requireSignin,
+    userController.addFollowing,
+    userController.addFollower
+  );
+router
+  .route("/api/users/nufollow")
+  .put(
+    authController.requireSignin,
+    userController.removeFollowing,
+    userController.removeFollower
+  );
 
 //mounts the user instence under the name of profile with proper id
 //on the request object << it's basicaly a middleware
