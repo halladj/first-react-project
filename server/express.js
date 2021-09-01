@@ -41,6 +41,7 @@ app.use(
 );
 app.use(cors());
 
+
 //MOUNTED THE USERS ROUTES HANDLER HERE
 //NOW THEY CAN BE ACCESSED VAI OUR APPLICATION
 app.use("/", authRoutes);
@@ -60,7 +61,6 @@ app.get("*", (req, res) => {
   if (context.url) {
     return res.redirect(303, context.url);
   }
-  console.log(context);
   const css = sheets.toString();
   res.status(200).send(
     Template({

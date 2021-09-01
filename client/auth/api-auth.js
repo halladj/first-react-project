@@ -3,7 +3,7 @@ const signin = async (user) => {
     let response = await fetch("/auth/signin/", {
       method: "POST",
       headers: {
-        Accept: "application/json",
+        "Accept": "application/json",
         "Content-Type": "application/json",
       },
       credentials: "include",

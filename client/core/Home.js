@@ -22,10 +22,10 @@ const useStyles = makeStyles((theme) => ({
     minHeight: 400,
   },
   credit: {
-    padding: 10,
-    textAlign: "right",
-    backgroundColor: "#ededed",
-    borderBottom: "1px solid #d0d0d0",
+    "padding": 10,
+    "textAlign": "right",
+    "backgroundColor": "#ededed",
+    "borderBottom": "1px solid #d0d0d0",
     "& a": {
       color: "#3f4771",
     },

@@ -37,22 +37,21 @@ const store = async (req, res) => {
 //..........................................................
 //fetch one the doc the id and hook it the request object
 const findUserById = async (req, res, next, id) => {
-  try {
-    let user = await User.findById(id)
-      .populate("following", "_id name")
-      .populate("followers", "_id name")
-      .exec();
-    if (!user) {
-      return res.status(400).json({
-        error: "User Not Found",
-      });
-    }
-    req.profile = user;
-    next();
+   try {
+     id == "follow" ? id= req.body.userId : id =id
+    let user = await User.findById(id).populate('following', '_id name')
+    .populate('followers', '_id name')
+    .exec()
+    if (!user)
+      return res.status('400').json({
+        error: "User not found"
+      })
+    req.profile = user
+    next()
   } catch (err) {
-    return res.status("400").json({
-      error: "Could Not Retrive The Document",
-    });
+    return res.status('400').json({
+      error: "Could not retrieve user"
+    })
   }
 };
 
@@ -126,69 +125,58 @@ const defaultImage = (req, res) => {
 //........................................................................
 //update the following array of the guy who follows the req.body.followId
 const addFollowing = async (req, res, next) => {
-  try {
-    await User.findOneAndUpdate(req.body.userId, {
-      $push: { following: req.body.followId },
-    });
-    next();
-  } catch (err) {
+  try{
+    await User.findByIdAndUpdate(req.body.userId, {$push: {following: req.body.followId}}) 
+    next()
+  }catch(err){
     return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
-    });
+      error: errorHandler.getErrorMessage(err)
+    })
   }
-};
-//........................................................................
-//this will update the followers array on the guy who got followed
+}
+
 const addFollower = async (req, res) => {
-  try {
-    let result = await User.findByIdAndUpdate(
-      req.body.followId,
-      {
-        $push: { followers: req.body.userId },
-      },
-      { new: true }
-    )
-      .populate("following", "_id name")
-      .populate("followers", "_id name")
-      .exec();
-  } catch (err) {
-    return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
-    });
-  }
-};
-//........................................................................
-//this will romove the follwed guy from the follwing list of req.body.userId
+  try{
+    let result = await User.findByIdAndUpdate(req.body.followId, {$push: {followers: req.body.userId}}, {new: true})
+                            .populate('following', '_id name')
+                            .populate('followers', '_id name')
+                            .exec()
+      result.hashed_password = undefined
+      result.salt = undefined
+      res.json(result)
+    }catch(err) {
+      return res.status(400).json({
+        error: errorHandler.getErrorMessage(err)
+      })
+    }  
+}
+
 const removeFollowing = async (req, res, next) => {
-  try {
-    await User.findByIdAndUpdate(req.body.userId, {
-      $pull: { following: req.body.unfollowId },
-    });
-    next();
-  } catch (err) {
+  try{
+    await User.findByIdAndUpdate(req.body.userId, {$pull: {following: req.body.unfollowId}}) 
+    next()
+  }catch(err) {
     return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
-    });
+      error: errorHandler.getErrorMessage(err)
+    })
   }
-};
-//........................................................................
-//this will remove the folloing guy from the followers list of req.body.followId
+}
 const removeFollower = async (req, res) => {
-  try {
-    let result = await User.findByIdAndUpdate(
-      req.body.unfollowed,
-      { $pull: { followers: req.body.userId } },
-      { new: true }
-    )
-      .populate("folloing", "_id name")
-      .populate("followers", "_id name")
-      .exec();
-  } catch (err) {
-    return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
-    });
+  try{
+    let result = await User.findByIdAndUpdate(req.body.unfollowId, {$pull: {followers: req.body.userId}}, {new: true})
+                            .populate('following', '_id name')
+                            .populate('followers', '_id name')
+                            .exec() 
+    result.hashed_password = undefined
+    result.salt = undefined
+    res.json(result)
+  }catch(err){
+      return res.status(400).json({
+        error: errorHandler.getErrorMessage(err)
+      })
   }
-};
+}
+
 
 export default {
   index,
@@ -199,8 +187,8 @@ export default {
   findUserById,
   photo,
   defaultImage,
-  removeFollower,
-  removeFollowing,
-  addFollower,
   addFollowing,
+  addFollower,
+  removeFollowing,
+  removeFollower,
 };

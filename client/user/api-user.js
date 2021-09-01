@@ -77,6 +77,8 @@ const remove = async (params, credentials) => {
 
 const follow = async (params, credentials, followId) => {
   try {
+    console.log(params.userId);
+    
     let response = await fetch("/api/users/follow/", {
       method: "PUT",
       headers: {
@@ -84,7 +86,10 @@ const follow = async (params, credentials, followId) => {
         "Content-Type": "application/json",
         Authorization: "Bearer " + credentials.t,
       },
-      body: JSON.stringify({ userId: params.userId, followId }),
+      body: JSON.stringify({
+        userId: params.userId,
+        followId: followId,
+      }),
     });
     return await response.json();
   } catch (err) {
@@ -101,7 +106,7 @@ const unfollow = async (params, credentials, unfollowId) => {
         "Content-Type": "application/json",
         Authorization: "Bearer " + credentials.t,
       },
-      body: JSON.stringify({ userId: params.userId, unfollowId }),
+      body: JSON.stringify({ userId: params.userId, unfollowId: unfollowId }),
     });
     return await response.json();
   } catch (err) {

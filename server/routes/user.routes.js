@@ -33,20 +33,13 @@ router.route("api/users/defaultPhoto").get(userController.defaultImage);
 
 //these routes are for endpoints for the following and followers
 //API's
-router
-  .route("/api/users/follow")
-  .put(
-    authController.requireSignin,
-    userController.addFollowing,
-    userController.addFollower
-  );
-router
-  .route("/api/users/nufollow")
-  .put(
-    authController.requireSignin,
-    userController.removeFollowing,
-    userController.removeFollower
-  );
+router.route('/api/users/follow')
+    .put(authController.requireSignin,
+      userController.addFollowing,
+      userController.addFollower);
+router.route('/api/users/unfollow')
+    .put(authController.requireSignin, userController.removeFollowing, userController.removeFollower);
+
 
 //mounts the user instence under the name of profile with proper id
 //on the request object << it's basicaly a middleware
